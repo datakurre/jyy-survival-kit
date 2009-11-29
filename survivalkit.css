@@ -1,4 +1,4 @@
-/* @override http://localhost:8080/survivalkit.css */
+/* @override http://192.168.1.2:8080/survivalkit.css */
 
 /* @group Layout */
 
@@ -75,6 +75,9 @@ dt {
   font-weight: bold;
 }
 
+th {
+  text-align: left;
+}
 ol li {
   margin-bottom: 1em;
 }
@@ -139,8 +142,38 @@ div.content table#instructions td {
 
 span.error-message {
 	margin: 2ex 0px;
-	font-weight: bold;
 	color: #aa0000;
+}
+
+/* @end */
+
+/* @group Buttons */
+
+div.removable {
+  background: url("/remove.png") no-repeat;
+  margin-top: -2.5ex;
+  padding-left: 16px;
+  color: red;
+  cursor: pointer;
+}
+
+div.removable:hover, input#add:hover, input#order:hover {
+  text-decoration: underline;
+}
+
+input#add, input#order {
+  padding: 8px 8px 8px 30px;
+  border: 1px solid grey;
+  background: white;
+  cursor: pointer;
+}
+
+input#add {
+  background: url("/add.png") 4px no-repeat;
+}
+
+input#order {
+  background: url("/order.png") 4px no-repeat;
 }
 
 /* @end */

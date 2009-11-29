@@ -35,3 +35,23 @@ handlers:
   static_files: jyy.png
   upload: jyy.png
   secure: always
+
+- url: /remove.png
+  static_files: remove.png
+  upload: remove.png
+  secure: always
+
+- url: /add.png
+  static_files: add.png
+  upload: add.png
+  secure: always
+
+- url: /order.png
+  static_files: order.png
+  upload: order.png
+  secure: always
+  
+- url: /jquery.js
+  static_files: jquery.js
+  upload: jquery.js
+  secure: always

@@ -7,6 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <metal:meta define-slot="meta" />
 <link rel="stylesheet" href="/survivalkit.css" type="text/css" />
+<metal:javascript define-slot="javascript"><!-- A slot for additional JavaScript includes --></metal:javascript>
 <title tal:content="title">The Master of the Templates</title>
 </head>
 <body>

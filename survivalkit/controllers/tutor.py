@@ -72,7 +72,8 @@ class Default(webapp.RequestHandler, ModelHandler, MainScreen):
     for i in range(1, int(self.request.get('rows')) + 1):
       if action is not "remove" or not self.request.get("%(i)s_removable" % vars()):
         kit = self.extract('Kit', self.request, prefix="%(i)s_" % vars(), skip=['order'])
-        kits.append(kit)
+        if [value for value in kit.items() if value[1] is not None]: # if kit has any values
+          kits.append(kit)
 
     errors = self.validate('Order', tutor, skip=['collection'])
     for i in range(1, len(kits) + 1):
@@ -81,7 +82,7 @@ class Default(webapp.RequestHandler, ModelHandler, MainScreen):
           errors["%(i)s_%(key)s" % vars()] = kit_errors[key]
 
     ## Returns an incomplete form
-    if errors or action in ['add', 'remove']:
+    if len(kits) == 0 or errors or action in ['add', 'remove']:
       defaults = tutor.copy()
       for i in range(1, len(kits) + 1):
         for key in kits[i-1]:
