@@ -1,0 +1,37 @@
+application: survival-kit
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /
+  script: survivalkit/controllers/tutor.py
+  secure: always
+
+- url: /manage
+  script: slasher.py
+
+- url: /manage/.*
+  script: survivalkit/controllers/secretary.py
+  login: admin
+  secure: always
+  
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
+
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
+  secure: always
+
+- url: /survivalkit.css
+  static_files: survivalkit.css
+  upload: survivalkit.css
+  secure: always
+  
+- url: /jyy.png
+  static_files: jyy.png
+  upload: jyy.png
+  secure: always

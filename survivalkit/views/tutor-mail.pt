@@ -1,0 +1,14 @@
+Your order was successfully submitted.
+
+Tutor's Contact Information
+
+<tal:content content="tutor/first_name" />
+<tal:content content="tutor/last_name" />
+<tal:content content="tutor/email" /><tal:condition condition="tutor/phone">
+<tal:content content="string:${tutor/phone}" />
+</tal:condition>
+Tutor's Survival KIT Orders
+<tal:repeat repeat="kit order">
+<tal:content content="string: ${kit/first_name} ${kit/last_name}" />, <tal:condition condition="kit/release_date" content="string: Pick-up at ${kit/release_date}," /><tal:condition condition="not: kit/release_date"><tal:content define="global undefined_dates python: True" content="string: Unspecified pick-up date *), " /></tal:condition> <tal:content content="kit/exchange_type" />
+</tal:repeat>
+<tal:condition condition="exists:undefined_dates">*) Remember to contact the secretary to arrange pick-ups for the orders with unspecified pick-up date!</tal:condition>

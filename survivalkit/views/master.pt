@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metal:page define-macro="master">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:form="http://www.formencode.org"
+      xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<metal:meta define-slot="meta" />
+<link rel="stylesheet" href="/survivalkit.css" type="text/css" />
+<title tal:content="title">The Master of the Templates</title>
+</head>
+<body>
+<div id="bg"></div>
+<div id="wrapper">
+  <div id="main">
+    <metal:main define-slot="main">
+      This is the master template of this application.
+    </metal:main>
+  </div>
+</div>
+</body>
+</html>
+</metal:page>

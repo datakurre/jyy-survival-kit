@@ -1,0 +1,146 @@
+/* @override http://localhost:8080/survivalkit.css */
+
+/* @group Layout */
+
+body {
+	margin: 0; padding: 2ex 0;
+	font-family: verdana, sans-serif;
+	font-size: 80%;
+}
+
+div#bg {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 14ex;
+	z-index: 0;
+	background: #0d5613;
+	border-bottom: 2ex solid #c0c0c0;
+}
+
+div#wrapper {
+	text-align: center;
+	z-index: 100;
+}
+
+div#main {
+	position: relative;
+	margin: 0 auto;
+	width: 72em;
+	text-align: left;
+	z-index: 100;
+}
+
+div.header {
+	padding: 4ex 2em 4ex 145px;
+	margin: 0 0 2ex 0;
+	border: 2px solid #2d7633;
+	border-top: 2ex solid #2d7633;
+	background: #eeeeee url(/jyy.png) no-repeat 1em;
+}
+
+div#secretary div.header {
+	position: relative;	float: left;
+	padding: 2ex 2em 2ex 2em;
+	width: 26em;
+	background-image: none;
+}
+
+div.content {
+	position: relative;
+}
+
+div#secretary div.content {
+	margin: 0 0 0 32em;
+	padding: 0px 20px 20px 20px;
+	border: 2px solid #aaaaaa;
+	background: #ffffff;
+	border-top: 14px solid #aaaaaa;
+	z-index: 10;
+}
+
+/* @end */
+
+/* @group Content */
+
+h1 {
+	font-size: 140%;
+}
+
+h2 {
+	font-size: 120%;
+}
+
+dt {
+  margin-left: 1.2em;
+  font-weight: bold;
+}
+
+ol li {
+  margin-bottom: 1em;
+}
+
+ul {
+  list-style-type: square;
+}
+
+ul li {
+  margin-bottom: 0.5em;
+}
+
+div.header h1 {
+	margin-top: 0px;
+	color: #0D5613;
+}
+
+div.content h2 {
+	padding: 1ex 1em;
+	background: #eeeeee;
+	color: #0D5613;
+	position: relative;
+}
+
+div#secretary div.content h2 {
+	margin: 1ex -20px;
+}
+
+div.content p {
+  margin-left: 2px;
+}
+
+/* @end */
+
+/* @group Forms */
+
+div.content table {
+	margin: 0 1em;
+	padding: 0;
+}
+
+div.content table#orders {
+	width: 70em;
+}
+
+div.content table#orders td {
+	margin: 0; padding: 0;
+    vertical-align: bottom;
+}
+
+div.content table#orders td.right {
+  text-align: right;
+}
+
+div.content table#orders td.checkbox {
+  text-align: center;
+}
+
+div.content table#instructions td {
+  vertical-align: top;
+}
+
+span.error-message {
+	margin: 2ex 0px;
+	font-weight: bold;
+	color: #aa0000;
+}
+
+/* @end */

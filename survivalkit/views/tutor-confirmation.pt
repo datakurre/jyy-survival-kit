@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metal:page metal:use-macro="sitemacros/macros/master">
+  <metal:main metal:fill-slot="main">
+    <div class="content">
+      <div class="header">
+        <h1 tal:content="title" />
+        <p>Your order was successfully submitted.</p>
+        <p>For any questions, please, contact the secretary.</p>
+      </div>
+      <h2>Tutor's Information</h2>
+      <dl>
+        <dt>First name</dt><dd tal:content="tutor/first_name" />
+        <dt>Last name</dt><dd tal:content="tutor/last_name" />
+        <dt>E-mail</dt><dd tal:content="tutor/email" />
+        <dt tal:condition="tutor/phone">Phone</dt>
+          <dd tal:condition="tutor/phone" tal:content="string:${tutor/phone}" />
+      </dl>
+      <h2>Survival KIT Orders</h2>
+      <ol>
+        <li tal:repeat="kit order">
+          <span tal:content="string: ${kit/first_name} ${kit/last_name}" />,
+          <span tal:condition="kit/release_date"
+                tal:content="string: Pick-up at ${kit/release_date}," />
+          <span tal:condition="not: kit/release_date">
+            <em tal:define="global undefined_dates python: True"
+                tal:content="string: Unspecified pick-up date, " />
+          </span>
+          <span tal:content="kit/exchange_type" />
+        </li>
+      </ol>
+      <p tal:condition="exists:undefined_dates"><strong>Remember to contact the secretary to arrange pick-ups for the orders with <em>unspecified pick-up date</em>!</strong></p>
+    </div>
+  </metal:main>
+</metal:page>
