@@ -8,6 +8,6 @@ Required files: formencode/__init__.py
                 formencode/interfaces.py
                 formencode/rewritingparser.py
                 formencode/validators.py
-Tested with version: unknown (at least >= 0.7.1)
+Tested with version: 1.2.2
 
 The included source has not been modified.

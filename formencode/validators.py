@@ -1,28 +1,10 @@
 ## FormEncode, a  Form processor
 ## Copyright (C) 2003, Ian Bicking <ianb@colorstudy.com>
-##
-## This library is free software; you can redistribute it and/or
-## modify it under the terms of the GNU Lesser General Public
-## License as published by the Free Software Foundation; either
-## version 2.1 of the License, or (at your option) any later version.
-##
-## This library is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## Lesser General Public License for more details.
-##
-## You should have received a copy of the GNU Lesser General Public
-## License along with this library; if not, write to the Free Software
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-##
-## NOTE: In the context of the Python environment, I interpret "dynamic
-## linking" as importing -- thus the LGPL applies to the contents of
-## the modules, but make no requirements on code importing these
-## modules.
 """
 Validator/Converters for use with FormEncode.
 """
 
+import locale
 import warnings
 import re
 DateTime = None
@@ -829,8 +811,8 @@ class DateValidator(FancyValidator):
     def validate_python(self, value, state):
         date_format = self.message('date_format', state)
         if isinstance(date_format, unicode):
-            # strftime doesn't like unicode
-            encoding = 'utf8'
+            # strftime uses the locale encoding, not Unicode
+            encoding = locale.getlocale(locale.LC_TIME)[1] or 'utf-8'
             date_format = date_format.encode(encoding)
         else:
             encoding = None
@@ -1134,7 +1116,10 @@ class UnicodeString(String):
     the String class.
 
     In addition to the String arguments, an encoding argument is also
-    accepted. By default the encoding will be utf-8.
+    accepted. By default the encoding will be utf-8. You can overwrite
+    this using the encoding parameter. You can also set inputEncoding
+    and outputEncoding differently. An inputEncoding of None means
+    "do not decode", an outputEncoding of None means "do not encode".
 
     All converted strings are returned as Unicode strings.
 
@@ -1149,14 +1134,18 @@ class UnicodeString(String):
 
     """
     encoding = 'utf-8'
+    inputEncoding = NoDefault
+    outputEncoding = NoDefault
     messages = {
         'badEncoding' : _("Invalid data or incorrect encoding"),
     }
 
-    def __init__(self, inputEncoding=None, outputEncoding=None, **kw):
+    def __init__(self, **kw):
         String.__init__(self, **kw)
-        self.inputEncoding = inputEncoding or self.encoding
-        self.outputEncoding = outputEncoding or self.encoding
+        if self.inputEncoding is NoDefault:
+            self.inputEncoding = self.encoding
+        if self.outputEncoding is NoDefault:
+            self.outputEncoding = self.encoding
 
     def _to_python(self, value, state):
         if not value:
@@ -1169,12 +1158,15 @@ class UnicodeString(String):
                 return value
             else:
                 value = str(value)
-        try:
-            return unicode(value, self.inputEncoding)
-        except UnicodeDecodeError:
-            raise Invalid(self.message('badEncoding', state), value, state)
-        except TypeError:
-            raise Invalid(self.message('badType', state, type=type(value), value=value), value, state)
+        if self.inputEncoding:
+            try:
+                value = unicode(value, self.inputEncoding)
+            except UnicodeDecodeError:
+                raise Invalid(self.message('badEncoding', state), value, state)
+            except TypeError:
+                raise Invalid(self.message('badType', state, type=type(value),
+                    value=value), value, state)
+        return value
 
     def _from_python(self, value, state):
         if not isinstance(value, unicode):
@@ -1182,7 +1174,7 @@ class UnicodeString(String):
                 value = unicode(value)
             else:
                 value = str(value)
-        if isinstance(value, unicode):
+        if self.outputEncoding and isinstance(value, unicode):
             value = value.encode(self.outputEncoding)
         return value
 
@@ -1533,16 +1525,16 @@ class URL(FancyValidator):
                     self.message('status', state, status=res.status),
                     state, url)
 
-    
+
 class XRI(FancyValidator):
     r"""
     Validator for XRIs.
-    
+
     It supports both i-names and i-numbers, of the first version of the XRI
     standard.
-    
+
     ::
-        
+
         >>> inames = XRI(xri_type="i-name")
         >>> inames.to_python("   =John.Smith ")
         '=John.Smith'
@@ -1572,9 +1564,9 @@ class XRI(FancyValidator):
         '!!1000!de21.4536.2cb2.8074'
         >>> inumbers.to_python("@!1000.9554.fabd.129c!2847.df3c")
         '@!1000.9554.fabd.129c!2847.df3c'
-    
+
     """
-    
+
     iname_valid_pattern = re.compile(r"""
     ^
     [\w]+                  # A global alphanumeric i-name
@@ -1582,11 +1574,11 @@ class XRI(FancyValidator):
     (\*[\w]+(\.[\w]+)*)*   # A community i-name
     $
     """, re.VERBOSE|re.UNICODE)
-    
-    
+
+
     iname_invalid_start = re.compile(r"^[\d\.-]", re.UNICODE)
     """@cvar: These characters must not be at the beggining of the i-name"""
-    
+
     inumber_pattern = re.compile(r"""
     ^
     (
@@ -1598,7 +1590,7 @@ class XRI(FancyValidator):
     (![\dA-F]{1,4}(\.[\dA-F]{1,4}){0,3})*   # Zero or more sub i-numbers
     $
     """, re.VERBOSE|re.IGNORECASE)
-    
+
     messages = {
         'noType': _("The type of i-name is not defined; it may be either individual or organizational"),
         'repeatedChar': _("Dots and dashes may not be repeated consecutively"),
@@ -1609,24 +1601,24 @@ class XRI(FancyValidator):
         'badType': _("The XRI must be a string (not a %(type)s: %(value)r)"),
         'badXri': _('"%(xri_type)s" is not a valid type of XRI')
         }
-    
+
     def __init__(self, add_xri=False, xri_type="i-name", **kwargs):
         """Create an XRI validator.
-        
+
         @param add_xri: Should the schema be added if not present? Officially
             it's optional.
         @type add_xri: C{bool}
         @param xri_type: What type of XRI should be validated? Possible values:
             C{i-name} or C{i-number}.
         @type xri_type: C{str}
-        
+
         """
         self.add_xri = add_xri
         assert xri_type in ('i-name', 'i-number'), \
                            ('xri_type must be "i-name" or "i-number"')
         self.xri_type = xri_type
         super(XRI, self).__init__(**kwargs)
-    
+
     def _to_python(self, value, state):
         """Prepend the 'xri://' schema if necessary and then remove trailing
         spaces"""
@@ -1634,35 +1626,35 @@ class XRI(FancyValidator):
         if self.add_xri and not value.startswith("xri://"):
             value = "xri://" + value
         return value
-    
+
     def validate_python(self, value, state=None):
         """Validate an XRI
-        
+
         @raise Invalid: If at least one of the following conditions in met:
             - C{value} is not a string.
             - The XRI is not a personal, organizational or network one.
             - The relevant validator (i-name or i-number) considers the XRI
                 is not valid.
-        
+
         """
         if not (isinstance(value, str) or isinstance(value, unicode)):
             raise Invalid(self.message("badType", state, type=str(type(value)),
                                        value=value),
                           value, state)
-        
+
         # Let's remove the schema, if any
         if value.startswith("xri://"):
             value = value[6:]
-        
+
         if not value[0] in ('@', '=') and not (self.xri_type == "i-number" \
         and value[0] == '!'):
             raise Invalid(self.message("noType", state), value, state)
-        
+
         if self.xri_type == "i-name":
             self._validate_iname(value, state)
         else:
             self._validate_inumber(value, state)
-    
+
     def _validate_iname(self, iname, state):
         """Validate an i-name"""
         # The type is not required here:
@@ -1674,7 +1666,7 @@ class XRI(FancyValidator):
         if not self.iname_valid_pattern.match(iname) or "_" in iname:
             raise Invalid(self.message("badIname", state, iname=iname), iname,
                           state)
-    
+
     def _validate_inumber(self, inumber, state):
         """Validate an i-number"""
         if not self.__class__.inumber_pattern.match(inumber):
@@ -1686,7 +1678,7 @@ class XRI(FancyValidator):
 class OpenId(FancyValidator):
     r"""
     OpenId validator.
-    
+
     ::
         >>> v = OpenId(add_schema=True)
         >>> v.to_python(' example.net ')
@@ -1704,24 +1696,24 @@ class OpenId(FancyValidator):
         Traceback (most recent call last):
         ...
         Invalid: "look@me.com" is not a valid OpenId (it is neither an URL nor an XRI)
-    
+
     """
-    
+
     messages = {
         'badId': _('"%(id)s" is not a valid OpenId (it is neither an URL nor an XRI)')
         }
-    
+
     def __init__(self, add_schema=False, **kwargs):
         """Create an OpenId validator.
-        
+
         @param add_schema: Should the schema be added if not present?
         @type add_schema: C{bool}
-        
+
         """
         self.url_validator = URL(add_http=add_schema)
         self.iname_validator = XRI(add_schema, xri_type="i-name")
         self.inumber_validator = XRI(add_schema, xri_type="i-number")
-    
+
     def _to_python(self, value, state):
         value = value.strip()
         try:
@@ -1736,7 +1728,7 @@ class OpenId(FancyValidator):
                     pass
         # It's not an OpenId!
         raise Invalid(self.message("badId", state, id=value), value, state)
-    
+
     def validate_python(self, value, state):
         self._to_python(value, state)
 
