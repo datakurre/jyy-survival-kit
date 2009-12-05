@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metal:page metal:use-macro="sitemacros/macros/master">
   <metal:javascript metal:fill-slot="javascript">
-  <script src="/jquery.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    function removeThisRowFromOrder(event) {
-      var removed = $(event.target).parent().parent().remove() ;
-    }
-    $(function() {
-  		$("#remove").remove() ;
-  		$(".removable").replaceWith('<div class="removable">remove</div>') ;
-  		$(".removable").click(removeThisRowFromOrder) ;
-  	});
-  </script>
+    <script src="/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      function removeThisRowFromOrder(event) {
+        var removed = $(event.target).parent().parent().remove() ;
+      }
+      $(function() {
+  		  $("#remove").remove() ;
+  		  $(".removable").replaceWith('<div class="removable">remove</div>') ;
+  		  $(".removable").click(removeThisRowFromOrder) ;
+  	  });
+    </script>
   </metal:javascript>
   <metal:main metal:fill-slot="main">
     <div class="content">

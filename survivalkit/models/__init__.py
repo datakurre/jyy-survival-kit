@@ -100,6 +100,14 @@ class ModelHandler(object):
        the values in the dictionary."""
     return eval(model)(**dictionary)
 
+  def update(self, model, key, dictionary):
+    """Updates model for key with values from
+       the dictionary."""
+    obj = eval(model).get(key)
+    for key in dictionary.keys():
+      obj.__setattr__(key, dictionary[key])
+    return obj
+
   def destroy(self, keys):
     """Deletes entities by keys."""
     db.delete(keys)

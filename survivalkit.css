@@ -58,6 +58,13 @@ div#secretary div.content {
 	z-index: 10;
 }
 
+div#secretary .instruction textarea {
+  float: left;
+}
+div#secretary .instruction, #create-instruction {
+  clear: both;
+}
+
 /* @end */
 
 /* @group Content */

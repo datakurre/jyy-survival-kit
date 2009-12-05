@@ -1,4 +1,23 @@
-#!/usr/bin/python# -*- coding: utf-8 -*-##   This file is part of the Survival-Kit ordering system.#   Copyright (C) 2009  the Student Union of the University of Jyväskylä,#                       Asko Soukka <asko.soukka@iki.fi>##   This program is free software: you can redistribute it and/or modify#   it under the terms of the GNU General Public License as published by#   the Free Software Foundation, either version 3 of the License, or#   (at your option) any later version.##   This program is distributed in the hope that it will be useful,#   but WITHOUT ANY WARRANTY; without even the implied warranty of#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the#   GNU General Public License for more details.##   You should have received a copy of the GNU General Public License#   along with this program.  If not, see <http://www.gnu.org/licenses/>.#
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+#   This file is part of the Survival-Kit ordering system.
+#   Copyright (C) 2009  the Student Union of the University of Jyväskylä,
+#                       Asko Soukka <asko.soukka@iki.fi>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 import datetime
 
@@ -54,7 +73,8 @@ class Create(webapp.RequestHandler, ModelHandler, MainScreen):
         self.create(model, values).put()
         self.redirect("/manage/")
       else:
-        self.response.out.write(htmlfill.render(self.render_form(), values, errors, encoding='utf-8'))
+        self.response.out.write(htmlfill.render(self.render_form(), values, errors,
+                                                force_defaults=False, encoding='utf-8'))
     else:
       self.error(404)
 
@@ -83,12 +103,36 @@ class Delete(webapp.RequestHandler, ModelHandler):
       self.redirect("/manage/")
     else:
       self.error(404)
-    
+
+class Update(webapp.RequestHandler, ModelHandler, MainScreen):
+  def post(self, model, key=None):
+    if model in ['Instruction']:
+      values = self.extract(model, self.request, prefix="%(key)s_" % vars())
+      errors = self.validate(model, values)
+      if not errors:
+        self.update(model, key, values).put()
+        self.redirect("/manage/")
+      else:
+        real_errors = {}
+        real_values = {}
+        for field in errors.keys():
+          real_errors["%(key)s_%(field)s" % vars()] = errors[field]
+        for field in values.keys():
+          real_values["%(key)s_%(field)s" % vars()] = values[field]
+
+
+
+        self.response.out.write(htmlfill.render(self.render_form(), real_values, real_errors,
+                                                force_defaults=False, encoding='utf-8'))
+    else:
+      self.error(404)
+
 def main():
   application = webapp.WSGIApplication([
       ('/manage/', Default),
       ('/manage/([^/]*)/create', Create),
       ('/manage/([^/]*)/delete', Delete),
+      ('/manage/([^/]*)/([^/]*)/update', Update),
       ('/manage/([^/]*)/([^/]*)/delete', Delete),
       ('/manage/([^/]*)/([^/]*)/download', Download),
     ], debug=False)
