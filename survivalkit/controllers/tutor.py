@@ -56,15 +56,15 @@ class Default(webapp.RequestHandler, ModelHandler, MainScreen):
   def get(self):
     """Renders an empty form."""
     # Running through htmlfill.render() removes non-standard form:error-tags from the template.
-    self.response.out.write(htmlfill.render(self.render_form(), None, None,
-                                            force_defaults=False, encoding='utf-8'))
+    self.response.out.write(htmlfill.render(self.render_form(), {"rows": 1}, None,
+                                            force_defaults=True, encoding='utf-8'))
 
   def post(self):
     """Handles all form submissions."""
     ## Decides the current action
-    action = self.request.get('add') and "add" \
-               or self.request.get('remove') and "remove" \
-               or self.request.get('order') and "order"
+    action = self.request.get('add-student') and "add" \
+               or self.request.get('remove-kits') and "remove" \
+               or self.request.get('place-orders') and "order"
   
     ## Retrieves submitted data
     tutor = self.extract('Order', self.request, skip=['collection'])
@@ -96,7 +96,7 @@ class Default(webapp.RequestHandler, ModelHandler, MainScreen):
         defaults['rows'] += 1
 
       self.response.out.write(htmlfill.render(self.render_form(defaults['rows']), defaults, errors,
-                                              force_defaults=False, encoding='utf-8'))
+                                              force_defaults=True, encoding='utf-8'))
     ## Places the orders and returns confirmation for the order
     else:
       ## Saves the orders

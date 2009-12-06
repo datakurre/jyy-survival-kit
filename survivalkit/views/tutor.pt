@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<metal:page metal:use-macro="sitemacros/macros/master">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:form="http://www.formencode.org"
+      xml:lang="en"
+      metal:use-macro="sitemacros/macros/master">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <metal:javascript metal:fill-slot="javascript">
     <script src="/jquery.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -7,98 +12,103 @@
         var removed = $(event.target).parent().parent().remove() ;
       }
       $(function() {
-  		  $("#remove").remove() ;
+  		  $("#remove-kits").remove() ;
   		  $(".removable").replaceWith('<div class="removable">remove</div>') ;
+        $(".removable").hover(
+          function(event) { $(event.target).parent().parent().addClass("removing") ; },
+          function(event) { $(event.target).parent().parent().removeClass("removing") ; }
+        ) ;
   		  $(".removable").click(removeThisRowFromOrder) ;
   	  });
     </script>
   </metal:javascript>
-  <metal:main metal:fill-slot="main">
-    <div class="content">
-      <div class="header">
-        <h1 tal:content="title" />
-        <p>This service is available only for the tutors of the exchange students of the <a href="http://www.jyu.fi/" title="the University of Jyväskylä">the University of Jyväskylä</a>.</p>
-        <p>The service is provided by <a href="http://www.jyy.fi" title="the Student Union of the University of Jyväskylä">the Student Union of the University of Jyväskylä</a>.</p>
-      </div>
-      <form method="post" tal:attributes="action root">
-        <div><input type="hidden" name="rows" tal:attributes="value rows" /></div>
-        <h2>Tutor's Information</h2>
-        <table id="tutor">
-          <tr>
-            <td>First name</td>
-            <td><input name="first_name" /></td>
-            <td><form:error name="first_name" format="default" /></td>
-          </tr>
-          <tr>
-            <td>Last name</td>
-            <td><input name="last_name" /></td>
-            <td><form:error name="last_name" format="default" /></td>
-          </tr>
-          <tr>
-            <td>E-mail</td>
-            <td><input name="email" /></td>
-            <td><form:error name="email" format="default" /></td>
-          </tr>
-          <tr>
-            <td>Phone</td>
-            <td><input name="phone" /></td>
-            <td><form:error name="phone" format="default" /></td>
-          </tr>
-        </table>
-        <h2>Survival KIT Orders</h2>
-        <table id="orders">
-          <tr>
-            <th>Student's First Name</th>
-            <th>Student's Last Name</th>
-            <th>Survival Kit's Pick-Up Date</th>
-            <th>Student's Exchange</th>
-            <th></th>
-          </tr>
-          <tr tal:repeat="row python:range(1, rows + 1)">
-            <td><input size="23" tal:attributes="name string:${row}_first_name" /></td>
-            <td><input tal:attributes="name string:${row}_last_name" /></td>
-             <td>
-              <select tal:attributes="name string:${row}_release_date">
-                <option value="">Select a date or arrange it by e-mail</option>
-                <option tal:repeat="release_date release_dates"
-                        tal:attributes="value release_date/date"
-                        tal:content="release_date/date" />
-              </select>
-            </td>
-            <td>
-              <select tal:attributes="name string:${row}_exchange_type">
-                <option value=""></option>
-                <option tal:repeat="exchange_type exchange_types"
-                        tal:attributes="value exchange_type/type"
-                        tal:content="exchange_type/type" />
-              </select>
-            </td>
-            <td class="checkbox">
-              <input type="checkbox" class="removable" tal:attributes="name string:${row}_removable" />
-            </td> 
-          </tr>
-          <tr>
-            <td style="padding-top: 1ex">
-              <input type="submit" name="add" id="add" value="Add an another student" />
-            </td>
-            <td style="padding-top: 1ex">
-              <input type="submit" name="order" id="order" value="Place the orders" />
-            </td>
-            <td></td>
-            <td></td>
-            <td style="padding-top: 1ex">
-              <input type="submit" name="remove" id="remove" value="Remove selected" />
-            </td>
-          </tr>
-        </table>
-      </form>
-      <tal:condition condition="instructions/count">
-        <h2>Instructions</h2>
-        <dl tal:repeat="instruction instructions">
-          <dt tal:content="instruction/topic" />
-          <dd tal:content="instruction/details" />
-        </dl>
-      </tal:condition>
+</head>
+<body>
+  <div id="content" metal:fill-slot="main">
+    <div id="page">
+      <h1 tal:content="title">JYY Survival Kit Order Form</h1>
+      <p>This service is available only for the tutors of the exchange students of the <a href="http://www.jyu.fi/" title="the University of Jyväskylä">the University of Jyväskylä</a>.</p>
+      <p>The service is provided by <a href="http://www.jyy.fi" title="the Student Union of the University of Jyväskylä">the Student Union of the University of Jyväskylä</a>.</p>
     </div>
-  </metal:main>
-</metal:page>
+    <form method="post" tal:attributes="action root" id="order-form">
+      <div><input type="hidden" name="rows" /></div>
+      <h2>Tutor's Information</h2>
+      <table id="contact-information">
+        <tr>
+          <td>First name</td>
+          <td><input name="first_name" /></td>
+          <td><form:error name="first_name" format="default" /></td>
+        </tr>
+        <tr>
+          <td>Last name</td>
+          <td><input name="last_name" /></td>
+          <td><form:error name="last_name" format="default" /></td>
+        </tr>
+        <tr>
+          <td>E-mail</td>
+          <td><input name="email" /></td>
+          <td><form:error name="email" format="default" /></td>
+        </tr>
+        <tr>
+          <td>Phone</td>
+          <td><input name="phone" /></td>
+          <td><form:error name="phone" format="default" /></td>
+        </tr>
+      </table>
+      <h2>Survival KIT Orders</h2>
+      <table id="kit-orders">
+        <tr>
+          <th>Student's First Name</th>
+          <th>Student's Last Name</th>
+          <th>Survival Kit's Pick-Up Date</th>
+          <th>Student's Exchange</th>
+          <th></th>
+        </tr>
+        <tr tal:repeat="row python:range(1, rows + 1)">
+          <td><input size="23" tal:attributes="name string:${row}_first_name" /></td>
+          <td><input tal:attributes="name string:${row}_last_name" /></td>
+           <td>
+            <select tal:attributes="name string:${row}_release_date">
+              <option value="">Select a date or arrange it by e-mail</option>
+              <option tal:repeat="release_date release_dates"
+                      tal:attributes="value release_date/date"
+                      tal:content="release_date/date" />
+            </select>
+          </td>
+          <td>
+            <select tal:attributes="name string:${row}_exchange_type">
+              <option value=""></option>
+              <option tal:repeat="exchange_type exchange_types"
+                      tal:attributes="value exchange_type/type"
+                      tal:content="exchange_type/type" />
+            </select>
+          </td>
+          <td class="center">
+            <input type="checkbox" class="removable" tal:attributes="name string:${row}_removable" />
+          </td> 
+        </tr>
+        <tr>
+          <td style="padding-top: 1ex">
+            <input type="submit" name="add-student" id="add-student" value="Add an another student" />
+          </td>
+          <td style="padding-top: 1ex">
+            <input type="submit" name="place-orders" id="place-orders" value="Place the orders" />
+          </td>
+          <td></td>
+          <td></td>
+          <td style="padding-top: 1ex">
+            <input type="submit" name="remove-kits" id="remove-kits" value="Remove selected" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    <tal:condition condition="instructions/count">
+      <h2>Instructions</h2>
+      <dl tal:repeat="instruction instructions">
+        <dt tal:content="instruction/topic">Instruction Topic</dt>
+        <dd tal:content="instruction/details">Intruction Details</dd>
+      </dl>
+    </tal:condition>
+  </div>
+</body>
+</html>
