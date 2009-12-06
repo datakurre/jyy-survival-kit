@@ -187,6 +187,9 @@ input#remove-kits {
   margin: 1ex -20px;
 }
 
+#management-help h2 {
+  margin: 1ex -15px;  
+}
 #management-form .instruction-item textarea + input {
   position: absolute;
 }
@@ -195,7 +198,7 @@ input#remove-kits {
   vertical-align: top;
 }
 
-input#add-date, input#add-duration, input#add-instruction, input.save-instruction {
+input#download-orders, input#add-date, input#add-duration, input#add-instruction, input.save-instruction {
   padding: 8px 8px 8px 30px;
   border: 1px solid grey;
   background: white;
@@ -210,7 +213,7 @@ input#add-date, input#add-duration, input#add-instruction {
   background: url("/add.png") 4px no-repeat;
 }
 
-input.save-instruction {
+input#download-orders, input.save-instruction {
   background: url("/order.png") 4px no-repeat;
 }
 
