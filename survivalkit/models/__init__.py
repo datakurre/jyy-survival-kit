@@ -37,7 +37,7 @@ class ModelHandler(object):
     # XXX Property classes db.ListProperty and db.StringListProperty are not supported
     dictionary = {}
     properties = eval(model).properties()
-    # Sometimes the browser have been forced to use e.g. "iso-8859-1" charset, even
+    # Sometimes the browser has been forced to use e.g. "iso-8859-1" charset, even
     # when the page is told to be in "utf-8". That might raise UnicodeDecodeError,
     # or just lose part of the input (when unicode_errors="ignore"). That's because
     # we read the first "accepted_charset" from headers (fallback to "iso-8859-1")
